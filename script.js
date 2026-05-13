@@ -1,47 +1,46 @@
-// Añadir en CodePen estos scripts externos:
-// https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js
-// https://cdn.jsdelivr.net/npm/chart.js
-
-const fileInput = document.getElementById("csvFile");
-
-fileInput.addEventListener("change", function(event) {
-  const file = event.target.files[0];
-
-  Papa.parse(file, {
-    header: true,
-    dynamicTyping: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      const data = results.data;
-      buildStory(data);
-    }
-  });
+Papa.parse("hotel_bookings.csv", {
+  download: true,
+  header: true,
+  dynamicTyping: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+    const data = results.data;
+    buildStory(data);
+  },
+  error: function(error) {
+    showError("No se ha podido cargar el archivo hotel_bookings.csv. Comprueba que está en la misma carpeta que index.html.");
+    console.error(error);
+  }
 });
 
 function buildStory(data) {
-  document.querySelectorAll(".hidden").forEach(el => {
-    el.style.display = "block";
-  });
+  const cleanData = data.filter(d => d.hotel);
 
-  const city = data.filter(d => d.hotel === "City Hotel");
-  const resort = data.filter(d => d.hotel === "Resort Hotel");
+  const city = cleanData.filter(d => d.hotel === "City Hotel");
+  const resort = cleanData.filter(d => d.hotel === "Resort Hotel");
 
-  document.getElementById("totalBookings").textContent = data.length.toLocaleString();
-  document.getElementById("cityBookings").textContent = city.length.toLocaleString();
-  document.getElementById("resortBookings").textContent = resort.length.toLocaleString();
+  const cancelled = cleanData.filter(d => Number(d.is_canceled) === 1).length;
 
-  const cancelled = data.filter(d => Number(d.is_canceled) === 1).length;
-  document.getElementById("cancelRate").textContent = ((cancelled / data.length) * 100).toFixed(1) + "%";
+  document.getElementById("totalBookings").textContent = cleanData.length.toLocaleString("es-ES");
+  document.getElementById("cityBookings").textContent = city.length.toLocaleString("es-ES");
+  document.getElementById("resortBookings").textContent = resort.length.toLocaleString("es-ES");
+  document.getElementById("cancelRate").textContent = ((cancelled / cleanData.length) * 100).toFixed(1) + "%";
 
-  createMonthChart(data);
+  createMonthChart(cleanData);
   createCancelChart(city, resort);
   createAdrChart(city, resort);
+  createStayChart(city, resort);
 }
 
 function createMonthChart(data) {
   const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
+  ];
+
+  const monthLabels = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
   const cityCounts = months.map(month =>
@@ -55,19 +54,19 @@ function createMonthChart(data) {
   new Chart(document.getElementById("monthChart"), {
     type: "line",
     data: {
-      labels: months,
+      labels: monthLabels,
       datasets: [
         {
           label: "City Hotel",
           data: cityCounts,
           borderWidth: 3,
-          tension: 0.3
+          tension: 0.35
         },
         {
           label: "Resort Hotel",
           data: resortCounts,
           borderWidth: 3,
-          tension: 0.3
+          tension: 0.35
         }
       ]
     },
@@ -77,6 +76,9 @@ function createMonthChart(data) {
         title: {
           display: true,
           text: "Reservas por mes según tipo de hotel"
+        },
+        legend: {
+          position: "bottom"
         }
       }
     }
@@ -111,6 +113,9 @@ function createCancelChart(city, resort) {
         title: {
           display: true,
           text: "Reservas canceladas y no canceladas"
+        },
+        legend: {
+          position: "bottom"
         }
       },
       scales: {
@@ -126,8 +131,13 @@ function createCancelChart(city, resort) {
 }
 
 function createAdrChart(city, resort) {
-  const cityAdr = average(city.map(d => Number(d.adr)).filter(v => !isNaN(v) && v > 0));
-  const resortAdr = average(resort.map(d => Number(d.adr)).filter(v => !isNaN(v) && v > 0));
+  const cityAdr = average(
+    city.map(d => Number(d.adr)).filter(v => !isNaN(v) && v > 0)
+  );
+
+  const resortAdr = average(
+    resort.map(d => Number(d.adr)).filter(v => !isNaN(v) && v > 0)
+  );
 
   new Chart(document.getElementById("adrChart"), {
     type: "bar",
@@ -147,6 +157,47 @@ function createAdrChart(city, resort) {
         title: {
           display: true,
           text: "Precio medio diario ADR por tipo de hotel"
+        },
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+}
+
+function createStayChart(city, resort) {
+  const cityStay = average(
+    city.map(d => Number(d.stays_in_week_nights) + Number(d.stays_in_weekend_nights))
+      .filter(v => !isNaN(v) && v > 0)
+  );
+
+  const resortStay = average(
+    resort.map(d => Number(d.stays_in_week_nights) + Number(d.stays_in_weekend_nights))
+      .filter(v => !isNaN(v) && v > 0)
+  );
+
+  new Chart(document.getElementById("stayChart"), {
+    type: "bar",
+    data: {
+      labels: ["City Hotel", "Resort Hotel"],
+      datasets: [
+        {
+          label: "Noches medias por reserva",
+          data: [cityStay, resortStay],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Duración media de la estancia"
+        },
+        legend: {
+          position: "bottom"
         }
       }
     }
@@ -154,5 +205,13 @@ function createAdrChart(city, resort) {
 }
 
 function average(values) {
+  if (values.length === 0) return 0;
   return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+function showError(message) {
+  const div = document.createElement("div");
+  div.className = "loading-error";
+  div.textContent = message;
+  document.body.prepend(div);
 }
