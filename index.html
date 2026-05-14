@@ -1,127 +1,200 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portugal tiene dos turismos distintos</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://unpkg.com/scrollama"></script>
 
-  <link rel="stylesheet" href="style.css" />
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">DATA STORYTELLING · HOTEL BOOKINGS</p>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+    <h1>
+      <span>Ay Portugal, ¿por qué te quiero tanto? </span>
+      <strong>¿Cómo se reserva en Portugal?</strong>
+    </h1>
 
-<body>
-  <main id="app">
+    <div class="title-line"></div>
 
-    <section class="hero">
-      <div class="hero-content">
-        <p class="tag">Storytelling de datos · Reservas hoteleras</p>
-        <h1>Portugal tiene dos turismos distintos</h1>
-        <p class="subtitle">
-          Una visualización interactiva sobre las diferencias entre el turismo urbano de Lisboa
-          y el turismo vacacional del Algarve.
-        </p>
+    <p class="hero-text">
+      Un viaje visual por el turismo internacional en Portugal:
+      quién viaja, cuándo lo hace, cuánto paga y qué mercados esconden más valor.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat stat-green">
+        <div class="stat-icon">💼</div>
+        <span>119K+</span>
+        <p>reservas</p>
       </div>
-    </section>
 
-    <section id="summary" class="section">
-      <h2>Dos hoteles, dos modelos turísticos</h2>
-      <p class="section-text">
-        El conjunto de datos compara reservas de un City Hotel y un Resort Hotel en Portugal.
-        A través de los datos se observa que ambos hoteles responden a patrones turísticos distintos.
+      <div class="stat stat-red">
+        <div class="stat-icon">🌍</div>
+        <span>177</span>
+        <p>países</p>
+      </div>
+
+      <div class="stat stat-green">
+        <div class="stat-icon">🏨</div>
+        <span>2</span>
+        <p>modelos de turismo</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-flag" aria-hidden="true">
+  <div class="flag-green"></div>
+  <div class="flag-red"></div>
+  <div class="flag-seal">PT</div>
+</div>
+</section>
+
+<main id="scrolly">
+  <article>
+
+    <section class="step" data-step="1">
+      <p class="story-bridge">Antes de contar la historia, hay que explicar cómo se construyó.</p>
+      <h2>Metodología</h2>
+      <p>
+        El análisis parte del dataset Hotel Booking Demand. Se agruparon las reservas por país,
+        mes y tipo de alojamiento, calculando indicadores como volumen, cancelación, ADR,
+        noches medias y antelación de reserva.
       </p>
-
-      <div class="cards">
-        <div class="card">
-          <h3>Total reservas</h3>
-          <p id="totalBookings">Cargando...</p>
-        </div>
-
-        <div class="card">
-          <h3>City Hotel</h3>
-          <p id="cityBookings">Cargando...</p>
-        </div>
-
-        <div class="card">
-          <h3>Resort Hotel</h3>
-          <p id="resortBookings">Cargando...</p>
-        </div>
-
-        <div class="card">
-          <h3>Cancelaciones</h3>
-          <p id="cancelRate">Cargando...</p>
-        </div>
-      </div>
+    </section>
+    
+    <section class="step" data-step="3">
+      <p class="story-bridge">Todo empieza con una reserva. Pero no todas cuentan la misma historia.</p>
+      <h2>No todo el mundo viaja igual</h2>
+      <p>
+        En Portugal, cada país deja una huella distinta: unos turistas viajan con antelación,
+        otros gastan más, otros se quedan más noches y algunos concentran todo su impacto en verano.
+      </p>
     </section>
 
-    <section class="section story">
-      <div class="text-block">
-        <span class="chapter">01</span>
-        <h2>El calendario revela dos ritmos</h2>
-        <p>
-          El Resort Hotel concentra una parte importante de su actividad en los meses de verano,
-          mientras que el City Hotel muestra una demanda más estable durante el año.
-        </p>
-      </div>
-      <div class="chart-box">
-        <canvas id="monthChart"></canvas>
-      </div>
+    <section class="step" data-step="2">
+      <p class="story-bridge">El primer hallazgo: Europa domina claramente la demanda.</p>
+      <h2>Europa como motor turístico</h2>
+      <p>
+        Aunque el dataset recoge reservas de 177 países, los principales mercados europeos
+        concentran la mayor parte del volumen. Por eso el análisis se centra en Europa,
+         porque es el núcleo de la demanda.
+      </p>
     </section>
 
-    <section class="section story alt">
-      <div class="text-block">
-        <span class="chapter">02</span>
-        <h2>Reservar no siempre significa viajar</h2>
-        <p>
-          Las cancelaciones son una parte clave del comportamiento hotelero.
-          Comparar ambos hoteles ayuda a entender dónde existe mayor incertidumbre.
-        </p>
-      </div>
-      <div class="chart-box">
-        <canvas id="cancelChart"></canvas>
-      </div>
+    <section class="step" data-step="4">
+      <p class="story-bridge">Y dentro de Europa: ¿de dónde viene el turismo?</p>
+      <h2>El mapa del turismo europeo</h2>
+      <p>
+        El origen importa. El mapa permite moverse por los distintos países (hay algunos en los que no se dispone de datos) para saber datos tales como número de reservas, tarifa media diaria (ADR),
+        cancelaciones, número de noches medias y anticipación de reserva (lead time).
+      </p>
+      <div class="mini-note">Para moverse usa las pestañas.</div>
     </section>
 
-    <section class="section story">
-      <div class="text-block">
-        <span class="chapter">03</span>
-        <h2>El precio medio diario también cambia</h2>
-        <p>
-          El ADR permite aproximar el valor económico de cada reserva.
-          City Hotel y Resort Hotel no solo reciben turistas distintos, también generan ingresos
-          de forma diferente.
-        </p>
-      </div>
-      <div class="chart-box">
-        <canvas id="adrChart"></canvas>
-      </div>
+    <section class="step" data-step="5">
+      <p class="story-bridge">¿Quiénes son los países protagonistas?</p>
+      <h2>Los gigantes turísticos</h2>
+      <p>
+        El turismo nacional lidera el volumen, pero Reino Unido, Francia, España y Alemania forman
+        el núcleo de mercados internacionales que sostienen buena parte de la demanda.
+      </p>
     </section>
 
-    <section class="section story alt">
-      <div class="text-block">
-        <span class="chapter">04</span>
-        <h2>La estancia media muestra otra diferencia</h2>
-        <p>
-          El turismo vacacional suele asociarse a estancias más largas, mientras que el turismo urbano
-          tiende a viajes más breves y frecuentes.
-        </p>
-      </div>
-      <div class="chart-box">
-        <canvas id="stayChart"></canvas>
-      </div>
+    <section class="step" data-step="6">
+      <p class="story-bridge">Impacto de la temporada alta en la ocupación hotelera.</p>
+      <h2>El verano lo cambia todo</h2>
+      <p>
+        Notamos la estacionalidad en las reservas hoteleras. Julio y Agosto transforman el sistema hotelero: aumentan las reservas, suben los precios. Una mayor demanda
+        incrementa la presión sobre los alojamientos.
+        Además, la alta demanda hace que los alojamientos impongan políticas de no-cancelación.
+      </p>
     </section>
 
-    <section class="conclusion">
+    <section class="step" data-step="7">
+      <p class="story-bridge">Pero más turistas no siempre significa la misma rentabilidad.</p>
+      <h2>El calendario del dinero</h2>
+      <p>
+        La temporada alta no solo trae más turistas: también multiplica la tarifa media diaria
+        (ADR), el precio medio pagado por habitación ocupada.
+        
+        Asimismo, los precios medios se duplican en temporada alta (140,11€) respecto a la temporada baja (70,36€).
+      </p>
+    </section>
+
+    <section class="step" data-step="8">
+      <p class="story-bridge">El tipo de destino también cambia el comportamiento.</p>
+      <h2>Ciudad y playa, dos mundos turísticos</h2>
+      <p>
+        El turismo urbano funciona con una lógica más estable durante el año. Los destinos
+        vacacionales, en cambio, viven una montaña rusa estacional ligada al verano.
+      </p>
+    </section>
+
+    <section class="step" data-step="9">
+      <p class="story-bridge">Ahora cada país deja de ser una sigla y se convierte en un perfil.</p>
+      <h2>El ADN turístico de cada país</h2>
+      <p>
+        Algunos mercados son de volumen, otros de valor, otros de larga estancia y otros de riesgo.
+        Visualizarlos como perfiles ayuda a entender mejor su papel en la estrategia hotelera.
+      </p>
+    </section>
+
+    <section class="step" data-step="10">
+      <p class="story-bridge">La pregunta cambia: no solo quién viaja, sino cuándo y hacia qué tipo de destino.</p>
+      <h2>¿Cuándo viaja cada país?</h2>
+      <p>
+        El heatmap normalizado muestra el calendario relativo de cada país y permite comparar
+        si el patrón se parece más a turismo de playa o a turismo urbano.
+        
+        Los países del norte de Europa tienden a aprovechar el clima de Portugal para visitar el país a lo largo del invierno.
+      </p>
+    </section>
+
+    <section class="step" data-step="11">
+      <p class="story-bridge">Con volumen y precio aparece la estrategia.</p>
+      <h2>Mercados estrella y mercados premium</h2>
+      <p>
+        Algunos países generan mucho volumen, otros alto valor económico y unos pocos combinan
+        ambas dimensiones.
+        Aquí se aprecian los distintos perfiles de viaje en acción, países con mayor capacidad económica como Luxemburgo y Noruega pueden acceder a un modelo de viaje más exclusivo.
+      </p>
+    </section>
+
+    <section class="step" data-step="12">
+      <p class="story-bridge">Pero toda oportunidad tiene un riesgo.</p>
+      <h2>El riesgo oculto</h2>
+      <p>
+        La cancelación cambia la lectura de los mercados: un país puede parecer atractivo por volumen,
+        pero ser más incierto para la planificación hotelera.
+      </p>
+    </section>
+
+    <section class="step" data-step="13">
+      <p class="story-bridge">Al final, los mercados se comparan como en un dashboard de decisión.</p>
+      <h2>Tabla dinámica de mercados europeos</h2>
+      <p>
+        Una tabla interactiva permite ordenar, filtrar y comparar países según volumen, ADR,
+        cancelación, estancia media y lead time.
+      </p>
+    </section>
+
+    <section class="step" data-step="14">
+      <p class="story-bridge">La historia termina con una idea clara: Portugal no recibe un único modelo de turismo.</p>
       <h2>Conclusión</h2>
       <p>
-        Los datos muestran que no existe un único turismo portugués. Lisboa representa un modelo urbano
-        más constante, mientras que el Algarve refleja un modelo vacacional más estacional.
+        Portugal reserva diferente. Entender esas diferencias permite segmentar mercados,
+        ajustar precios, anticipar riesgos y diseñar estrategias distintas para ciudad y playa.
       </p>
     </section>
 
-  </main>
+  </article>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <figure>
+    <div id="controls" class="controls">
+      <button data-map="bookings" class="active">Reservas</button>
+      <button data-map="adr">ADR</button>
+      <button data-map="cancel">Cancelación</button>
+      <button data-map="nights">Noches</button>
+      <button data-map="lead">Lead time</button>
+    </div>
+
+    <div id="chart"></div>
+    <p id="caption"></p>
+  </figure>
+</main>
